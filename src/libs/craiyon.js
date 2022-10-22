@@ -19,5 +19,10 @@ export default async (payload) => {
     })
   })
   const image = 'data:image/png;base64,' + getRandomString(response.images)
-  return { payload: { image } }
+  return {
+    payload: {
+      message: `Results for ${payload.arguments}`,
+      image
+    }
+  }
 }

@@ -47,6 +47,14 @@ broker.client.on('message', async (topic, data) => {
     const validatedRequest = broker[topicName].validate(requestPayload)
     if (validatedRequest.errors) throw { message: validatedRequest.errors } // eslint-disable-line
     if (validatedRequest.service !== process.env.npm_package_name) return
+
+    const waitResponse = broker.responseRead.validate({
+      key: 'dalleTakeAWhile',
+      category: 'system',
+      ...requestPayload
+    })
+    broker.client.publish(`${topicPrefix}responseRead`, JSON.stringify(waitResponse))
+
     const processedResponse = await services[validatedRequest.name](validatedRequest)
     if (!processedResponse) return
     const replyTopic = processedResponse.topic ?? broadcastTopic
