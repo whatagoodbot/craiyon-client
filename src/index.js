@@ -1,8 +1,4 @@
 import broker from 'message-broker'
-import { Strings } from '@whatagoodbot/rpc'
-const stringService = new Strings('192.168.4.56', '50052')
-console.log(await stringService.get('starsIcon'))
-
 import { logger } from './utils/logging.js'
 import { metrics } from './utils/metrics.js'
 import { performance } from 'perf_hooks'
