@@ -19,7 +19,7 @@ export default async (payload) => {
     })
   })
   let image = `<img src="data:image/png;base64,${getRandomString(response.images)}" />`
-  if (payload.client === 'TTL') {
+  if (payload.client === 'goodbot-ttl') {
     image = `data:image/png;base64,${getRandomString(response.images)}`
   }
   return {
