@@ -18,7 +18,10 @@ export default async (payload) => {
       prompt: payload.arguments
     })
   })
-  const image = 'data:image/png;base64,' + getRandomString(response.images)
+  let image = `<img src="data:image/png;base64,${getRandomString(response.images)}" />`
+  if (payload.client === 'TTL') {
+    image = `data:image/png;base64,${getRandomString(response.images)}`
+  }
   return {
     payload: {
       message: `Results for ${payload.arguments}`,

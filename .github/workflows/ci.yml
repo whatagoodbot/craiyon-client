@@ -40,4 +40,4 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: whatagoodbot/craiyon-client:latest,whatagoodbot/craiyon-client:1.0.0
+          tags: whatagoodbot/craiyon-client:latest,whatagoodbot/craiyon-client:1.0.1
