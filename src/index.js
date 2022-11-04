@@ -1,4 +1,8 @@
 import broker from 'message-broker'
+import { Strings } from '@whatagoodbot/rpc'
+const stringService = new Strings('192.168.4.56', '50052')
+console.log(await stringService.get('starsIcon'))
+
 import { logger } from './utils/logging.js'
 import { metrics } from './utils/metrics.js'
 import { performance } from 'perf_hooks'
@@ -53,6 +57,7 @@ broker.client.on('message', async (topic, data) => {
       category: 'system',
       ...requestPayload
     })
+    if (process.env.FULLDEBUG) return
     broker.client.publish(`${topicPrefix}responseRead`, JSON.stringify(waitResponse))
 
     const processedResponse = await services[validatedRequest.name](validatedRequest)
@@ -63,6 +68,7 @@ broker.client.on('message', async (topic, data) => {
       ...processedResponse.payload
     })
     if (validatedResponse.errors) throw { message: validatedResponse.errors } // eslint-disable-line
+    if (process.env.FULLDEBUG) return
     broker.client.publish(`${topicPrefix}${replyTopic}`, JSON.stringify(validatedResponse))
 
     metrics.timer('responseTime', performance.now() - startTime, { topic })
@@ -77,6 +83,7 @@ broker.client.on('message', async (topic, data) => {
       ...requestPayload
     })
     metrics.count('error', { topicName })
+    if (process.env.FULLDEBUG) return
     broker.client.publish(`${topicPrefix}responseRead`, JSON.stringify(validatedResponse))
   }
 })
