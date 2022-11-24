@@ -13,7 +13,7 @@ export default async (payload, topicPrefix, broker) => {
     const string = await clients.strings.get('missingArgumentDalle')
     logger.debug({ event: 'missingArgumentDalle' })
     metrics.count('missingArgumentDalle')
-      return {
+    return {
       topic: 'broadcast',
       payload: {
         message: string.value
