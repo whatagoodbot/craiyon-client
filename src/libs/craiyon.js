@@ -1,31 +1,48 @@
-import { buildUrl, makeRequest } from '../utils/networking.js'
-import getRandomString from '../utils/getRandomString.js'
+import { performance } from 'perf_hooks'
+import { logger, metrics, networking, getRandom } from '@whatagoodbot/utilities'
+import { clients } from '@whatagoodbot/rpc'
 
-export default async (payload) => {
+export default async (payload, topicPrefix, broker) => {
+  if (payload.service !== process.env.npm_package_name) return
+  const startTime = performance.now()
+  const functionName = 'dalle'
+  logger.debug({ event: functionName })
+  metrics.count(functionName)
+
   if (!payload.arguments) {
+    const string = await clients.strings.get('missingArgumentDalle')
+    logger.debug({ event: 'missingArgumentDalle' })
+    metrics.count('missingArgumentDalle')
     return {
-      topic: 'responseRead',
+      topic: 'broadcast',
       payload: {
-        key: 'missingArgumentDalle',
-        category: 'system'
+        message: string.value
       }
     }
   }
-  const url = buildUrl('backend.craiyon.com/generate')
-  const response = await makeRequest(url, {
+  const string = await clients.strings.get('dalleTakeAWhile')
+  const waitResponse = broker.broadcast.validate({
+    ...payload,
+    message: string.value
+  })
+  broker.client.publish(`${topicPrefix}broadcast`, JSON.stringify(waitResponse))
+
+  const url = networking.buildUrl('backend.craiyon.com/generate')
+  const response = await networking.makeRequest(url, {
     method: 'POST',
     body: JSON.stringify({
       prompt: payload.arguments
     })
   })
-  let image = `<img src="data:image/png;base64,${getRandomString(response.images)}" />`
+  let image = `<img src="data:image/png;base64,${getRandom.fromArray(response.images)}" />`
   if (payload.client === 'goodbot-ttl') {
-    image = `data:image/png;base64,${getRandomString(response.images)}`
+    image = `data:image/png;base64,${getRandom.fromArray(response.images)}`
   }
-  return {
+  metrics.trackExecution(functionName, 'function', performance.now() - startTime, true)
+  return [{
+    topic: 'broadcast',
     payload: {
-      message: `Results for ${payload.arguments}`,
-      image
+      message: `Results for ${payload.arguments} ${image}`
     }
-  }
+  }]
 }
