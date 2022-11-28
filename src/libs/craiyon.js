@@ -1,6 +1,7 @@
 import { performance } from 'perf_hooks'
 import { logger, metrics, networking, getRandom } from '@whatagoodbot/utilities'
 import { clients } from '@whatagoodbot/rpc'
+import fs from 'fs'
 
 export default async (payload, topicPrefix, broker) => {
   if (payload.service !== process.env.npm_package_name) return
@@ -34,7 +35,10 @@ export default async (payload, topicPrefix, broker) => {
       prompt: payload.arguments
     })
   })
-  const image = `<img src="data:image/webp;base64,${getRandom.fromArray(response.images)}" />`
+  const imagePayload = getRandom.fromArray(response.images)
+  const fileName = `images/${payload.room.name.replaceAll(' ','')}-${payload.arguments.replaceAll(' ','')}_${Date.now()}.png`
+  fs.writeFileSync(`./${fileName}`, imagePayload, 'base64')
+  const image = `https://${process.env.IMAGE_SERVER_URL}/${fileName}`
   metrics.trackExecution(functionName, 'function', performance.now() - startTime, true)
   return [{
     topic: 'broadcast',
