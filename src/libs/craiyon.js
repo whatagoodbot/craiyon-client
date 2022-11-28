@@ -34,7 +34,7 @@ export default async (payload, topicPrefix, broker) => {
       prompt: payload.arguments
     })
   })
-  let image = `<img src="data:image/png;base64,${getRandom.fromArray(response.images)}" />`
+  let image = `<img src="data:image/webp;base64,${getRandom.fromArray(response.images)}" />`
   if (payload.client === 'goodbot-ttl') {
     image = `data:image/png;base64,${getRandom.fromArray(response.images)}`
   }
