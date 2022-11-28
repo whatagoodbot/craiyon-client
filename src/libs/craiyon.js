@@ -28,16 +28,15 @@ export default async (payload, topicPrefix, broker) => {
   broker.client.publish(`${topicPrefix}broadcast`, JSON.stringify(waitResponse))
 
   const url = networking.buildUrl('backend.craiyon.com/generate')
+  logger.info({ event: 'craiyonRequest', payload: payload.arguments, url })
   const response = await networking.makeRequest(url, {
     method: 'POST',
     body: JSON.stringify({
       prompt: payload.arguments
     })
   })
-  let image = `<img src="data:image/webp;base64,${getRandom.fromArray(response.images)}" />`
-  if (payload.client === 'goodbot-ttl') {
-    image = `data:image/png;base64,${getRandom.fromArray(response.images)}`
-  }
+  const image = `<img src="data:image/webp;base64,${getRandom.fromArray(response.images)}" />`
+  logger.info({ event: 'craiyonResponse', payload: response })
   metrics.trackExecution(functionName, 'function', performance.now() - startTime, true)
   return [{
     topic: 'broadcast',
