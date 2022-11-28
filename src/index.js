@@ -13,10 +13,7 @@ const subscribe = () => {
   Object.keys(controllers).forEach((topic) => {
     broker.client.subscribe(`${topicPrefix}${topic}`, (err) => {
       logger.info(`Subscribed to ${topicPrefix}${topic}`)
-      if (err) {
-        logger.error(err)
-        logger.debug({ topic })
-      }
+      if (err) logger.error(err)
     })
   })
 }
@@ -51,6 +48,7 @@ broker.client.on('message', async (fullTopic, data) => {
       if (validatedResponse.errors) throw { message: validatedResponse.errors } // eslint-disable-line
       if (processedResponse.topic && !process.env.FULLDEBUG) {
         logger.debug({ event: 'Publishing', topic: processedResponse.topic })
+        logger.info({ event: 'Publishing', response: processedResponse })
         broker.client.publish(`${topicPrefix}${processedResponse.topic}`, JSON.stringify(validatedResponse))
       }
     }
