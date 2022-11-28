@@ -1,6 +1,6 @@
 {
   "name": "integration-craiyon",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "",
   "main": "index.js",
   "type": "module",
@@ -37,7 +37,7 @@
     "standard": "^17.0.0"
   },
   "dependencies": {
-    "@whatagoodbot/mqtt": "^4.0.0",
+    "@whatagoodbot/mqtt": "^4.0.1",
     "@whatagoodbot/rpc": "^2.0.0",
     "@whatagoodbot/utilities": "^1.0.0",
     "node-fetch": "^3.2.10"
