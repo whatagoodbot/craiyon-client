@@ -44,7 +44,7 @@ export default async (payload, topicPrefix, broker) => {
   return [{
     topic: 'broadcast',
     payload: {
-      message: `Results for ${payload.arguments} <div class="image-container"><a href="${image}" target="_blank"/><img src="${image}"/></a></div>`
+      message: `Results for ${payload.arguments} <a href="${image}" target="_blank"/><img src="${image}"/></a>`
     }
   }]
 }
