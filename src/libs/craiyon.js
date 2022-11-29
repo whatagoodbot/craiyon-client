@@ -41,10 +41,13 @@ export default async (payload, topicPrefix, broker) => {
 
   const image = `https://${process.env.IMAGE_SERVER_URL}/${fileName}`
   metrics.trackExecution(functionName, 'function', performance.now() - startTime, true)
+  let message = `Results for ${payload.arguments} <a href="${image}" target="_blank"><img src="${image}"/></a>`
+  console.log(payload.client.richText)
+  if (payload.client.richText) message = `<table><tr><td>Results for ${payload.arguments}</td></tr><tr><td><a href="${image}" target="_blank" class="image-container"><img src="${image}"/></a></td></tr></table>`
   return [{
     topic: 'broadcast',
     payload: {
-      message: `Results for ${payload.arguments} <a href="${image}" target="_blank"/><img src="${image}"/></a>`
+      message
     }
   }]
 }
