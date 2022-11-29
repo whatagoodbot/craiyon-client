@@ -38,12 +38,13 @@ export default async (payload, topicPrefix, broker) => {
   const imagePayload = getRandom.fromArray(response.images)
   const fileName = `images/${Date.now()}.png`
   fs.writeFileSync(`./${fileName}`, imagePayload, 'base64')
+
   const image = `https://${process.env.IMAGE_SERVER_URL}/${fileName}`
   metrics.trackExecution(functionName, 'function', performance.now() - startTime, true)
   return [{
     topic: 'broadcast',
     payload: {
-      message: `Results for ${payload.arguments} ${image}`
+      message: `Results for ${payload.arguments} <div class="image-container"><a href="${image}" target="_blank"/><img src="${image}"/></a></div>`
     }
   }]
 }
